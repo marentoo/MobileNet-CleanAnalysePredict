@@ -19,66 +19,53 @@ scaler_stand = StandardScaler() #scale differently ( for e.g. Logistic Regressio
 #new data frames -scaled- to analyze and put into ML model
 df_scale_downloads, df_scale_uploads = clean_df(df_downloads, df_uploads, scaler_norm)
 
-
-
-
 #-----------------------------------------------------------------------------
 #analyze data # create charts, planes...
 
-#For download
+def analyze(df1, df2):
+    #For download
+        # Summary statistics
+        # Histograms of numeric columns
+    df1.hist(figsize=(20,15))
+    plt.savefig('evaluation/histogram_d.png')
+        # Boxplots of numeric columns
+    fig, ax = plt.subplots(figsize=(20,6))
+    df1.plot(kind='box', ax=ax)
+    # Set plot title and axis labels
+    plt.title('Box plot of numeric columns')
+    plt.xlabel('Columns')
+    plt.ylabel('Values')
+    plt.savefig('evaluation/boxplots_d.png')
+        # Correlation matrix
+    corr_matrix = df1.corr(numeric_only=[False/True])
+        # Heatmap of correlation matrix
+    plt.matshow(corr_matrix)
+    plt.xticks(range(len(corr_matrix.columns)), corr_matrix.columns, rotation=90)
+    plt.yticks(range(len(corr_matrix.columns)), corr_matrix.columns)
+    plt.colorbar()
+    plt.savefig('evaluation/heatmap_d.png')
+
+    #For upload
     # Summary statistics
-print(df_scale_downloads.describe())
-    # Histograms of numeric columns
-df_scale_downloads.hist(figsize=(20,15))
-plt.savefig('evaluation/histogram_d.png')
+        # Histograms of numeric columns
+    df2.hist(figsize=(20,15))
+    plt.savefig('evaluation/histogram_u.png')
+        # Boxplots of numeric columns
+    fig, ax = plt.subplots(figsize=(20,6))
+    df2.plot(kind='box', ax=ax)
+    # Set plot title and axis labels
+    plt.title('Box plot of numeric columns')
+    plt.xlabel('Columns')
+    plt.ylabel('Values')
+    plt.savefig('evaluation/boxplots_u.png')
+        # Correlation matrix
+    corr_matrix = df2.corr(numeric_only=[False/True])
+        # Heatmap of correlation matrix
+    plt.matshow(corr_matrix)
+    plt.xticks(range(len(corr_matrix.columns)), corr_matrix.columns, rotation=90)
+    plt.yticks(range(len(corr_matrix.columns)), corr_matrix.columns)
+    plt.colorbar()
+    plt.savefig('evaluation/heatmap_u.png')
 
-    # Boxplots of numeric columns
-fig, ax = plt.subplots(figsize=(20,6))
-df_scale_downloads.plot(kind='box', ax=ax)
-# Set plot title and axis labels
-plt.title('Box plot of numeric columns')
-plt.xlabel('Columns')
-plt.ylabel('Values')
-plt.savefig('evaluation/boxplots_d.png')
-
-    # Correlation matrix
-corr_matrix = df_scale_downloads.corr(numeric_only=[False/True])
-print(corr_matrix)
-
-    # Heatmap of correlation matrix
-plt.matshow(corr_matrix)
-plt.xticks(range(len(corr_matrix.columns)), corr_matrix.columns, rotation=90)
-plt.yticks(range(len(corr_matrix.columns)), corr_matrix.columns)
-plt.colorbar()
-plt.savefig('evaluation/heatmap_d.png')
-
-#For upload
-# Summary statistics
-print(df_scale_uploads.describe())
-    # Histograms of numeric columns
-df_scale_uploads.hist(figsize=(20,15))
-plt.savefig('evaluation/histogram_u.png')
-
-    # Boxplots of numeric columns
-fig, ax = plt.subplots(figsize=(20,6))
-df_scale_uploads.plot(kind='box', ax=ax)
-# Set plot title and axis labels
-plt.title('Box plot of numeric columns')
-plt.xlabel('Columns')
-plt.ylabel('Values')
-plt.savefig('evaluation/boxplots_u.png')
-
-    # Correlation matrix
-corr_matrix = df_scale_uploads.corr(numeric_only=[False/True])
-print(corr_matrix)
-
-    # Heatmap of correlation matrix
-plt.matshow(corr_matrix)
-plt.xticks(range(len(corr_matrix.columns)), corr_matrix.columns, rotation=90)
-plt.yticks(range(len(corr_matrix.columns)), corr_matrix.columns)
-plt.colorbar()
-plt.savefig('evaluation/heatmap_u.png')
-
-
-# df_scale_downloads.to_csv('evaluation/data_download.csv', index=False)
-# df_scale_uploads.to_csv('evaluation/data_upload.csv', index=False)
+## let's test it
+# analyze(df_downloads,df_uploads)
