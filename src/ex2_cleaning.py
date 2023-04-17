@@ -2,12 +2,10 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
+import os
 
-from ex2_loading import load_df
+from src.ex2_loading import load_df
 
-df1 = pd.read_csv('o2_download_nexus5x.csv'); df2 = pd.read_csv('telekom_download_nexus5x.csv'); df3 = pd.read_csv('vodafone_download_nexus5x.csv')
-df4 = pd.read_csv('o2_upload_nexus5x.csv'); df5 = pd.read_csv('telekom_upload_nexus5x.csv'); df6 = pd.read_csv('vodafone_upload_nexus5x.csv')
-df_downloads,df_uploads = load_df(df1,df2,df3,df4,df5,df6)
 
 # print(df_downloads.head(3)); # print(df_uploads.head(3))
 
@@ -48,6 +46,9 @@ def detect_outliers(df, df_name):
 
         ##Vizualize outliers - boxplot
 def vis_outl_bxplt(df, columns, dfbx_name):
+#     if not os.path.exists('../evaluation'):
+#          os.mkdir('../evaluation')
+         
     df_num = df.loc[:,columns]
     _, ax = plt.subplots(figsize=(20,6))
     df_num.plot(kind = 'box', ax=ax)
@@ -93,5 +94,10 @@ def clean_df(XDdf_downloads, XDdf_uploads, XDscaler_norm):
         return XDdf_scale_d, XDdf_scale_u
 
 ## let's test it
+# df1 = pd.read_csv('o2_download_nexus5x.csv'); df2 = pd.read_csv('telekom_download_nexus5x.csv'); df3 = pd.read_csv('vodafone_download_nexus5x.csv')
+# df4 = pd.read_csv('o2_upload_nexus5x.csv'); df5 = pd.read_csv('telekom_upload_nexus5x.csv'); df6 = pd.read_csv('vodafone_upload_nexus5x.csv')
+# df_downloads,df_uploads = load_df(df1,df2,df3,df4,df5,df6)
+
 # df_scale_d, df_scale_u = clean_df(df_downloads, df_uploads, scaler_norm)
+# print(df_scale_d.head(1)); print(df_scale_u.head(1))
 
