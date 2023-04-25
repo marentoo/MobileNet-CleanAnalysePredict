@@ -17,7 +17,12 @@ def main():
     df_scaled_downloads, df_scaled_uploads = clean_df(df_downloads, df_uploads, scaler_norm)
     analyze(df_scaled_downloads,df_scaled_uploads)
     # predict(df_scaled_downloads,df_scaled_downloads)
+    df_scaled_downloads.to_csv('downloads.csv')
+    df_scaled_uploads.to_csv('uploads.csv')
+    print(len(df_scaled_uploads.index))
+    print(len(df_scaled_downloads.index))
     return df_scaled_downloads, df_scaled_uploads
+
 
 if __name__ == "__main__":
     main()
