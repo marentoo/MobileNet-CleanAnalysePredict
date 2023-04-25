@@ -77,6 +77,41 @@ def scaling_data(df, scaler):
         print(df.head(1)) #let's check it
         return df
 
+def droping_data(dfD, dfU): #download and upload dataframes
+        #for download:
+        dfD.drop(['rb1'], axis=1) #rb0 and rb1 are the same columns
+        dfD.drop(['chipsettime'], axis=1) #gpstime is the same as gpstime
+
+        #if we will marge downloads and uploads then uncomment this:
+        """
+        dfD['tbs'] = np.add(dfD['tbs0'], dfD['tbs1']) #tbs is the sum of tbs0 and tbs1, what we see in throughput and tp_cleaned
+        dfD.drop(['tbs0'], axis=1) #now we can delete tbs0
+        dfD.drop(['tbs1'], axis=1) #and also we can delete tbs1
+        dfD.rename(columns={"rb1": "rbs"}) #rename the columns to match the upload
+        #dfD.drop(['mcs0'], axis=1) #amsc0 is not used in upload
+        dfD.drop(['mcs1'], axis=1) #amsc1 is not used in upload
+        #think about adding the msc0 to upload like thet:
+        dfD['tbs'] = np.add(dfD['tbs0'], dfD['tbs1'])
+        #worth notice, that msindex = msc0: 1 = QPSK, 2 = 16QAM, 3 = 64QAM
+        dfU['msc0'] = dfU.apply(add_msc, axis=1) #then comment drop msc0
+        dfD.drop(['mimo'], axis=1) #mimo is not used in upload
+        dfD.drop(['rnti'], axis=1) #rnti is not used in upload
+        #dfD.drop(['throughput'], axis=1) #throughput is not used in upload
+        #but we can add it, because it is tbs/1000 = tp_cleaned
+        dfU['throughput'] = np.copy(dfU['tp_cleaned']) #throughput = tp_cleaned
+        dfD.drop(['scc'], axis=1) #scc is not used in upload, and it is not that menaingfulll for prediction
+        dfD.drop(['caindex'], axis=1) #caindex is not used in upload
+        dfU.drop(['qualitytimestamp'], axis=1) #qualitytimestamp = gpstime
+        
+        #throughput is not in the upload file, so maybe we must redict tp_cleaned if we marge files
+
+def add_msc(df):
+        if (df['mcsindex'] == 1) :  return "QPSK"
+        elif(df['mcsindex'] == 2): return "16QAM"
+        elif(df['mcsindex'] == 3): return "64QAM"
+        else: return ""
+ """  
+
 #------------------------------------------------------------------------------------
 def clean_df(XDdf_downloads, XDdf_uploads, XDscaler_norm):
         clean_dupl(XDdf_downloads, 'downloads')
