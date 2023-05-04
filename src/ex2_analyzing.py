@@ -1,54 +1,46 @@
-import pandas as pd
-from sklearn.preprocessing import MinMaxScaler, StandardScaler
+# import pandas as pd
 import matplotlib.pyplot as plt
-# import os
-from src.ex2_loading import load_df
-from src.ex2_cleaning import clean_df
 
 #-----------------------------------------------------------------------------
-#analyze data # create charts, planes...
-
-def analyze(df_down, df_upl):
-
-    df_tuple = (df_down,df_upl)
-    for df in df_tuple:
-        df_name = [k for k,v in locals().items() if v is df][0]
-        # if not os.path.exists('../evaluation'):
-        #  os.mkdir('../evaluation')
-        
-        # Histograms of numeric columns
-        df.hist(figsize=(20,15))
-        plt.savefig('evaluation/histogram_{}.png'.format(df_name))
-        # Boxplots of numeric columns
-        _, ax = plt.subplots(figsize=(20,6))
-        df.plot(kind='box', ax=ax)
-        # Set plot title and axis labels
-        plt.title('Box plot of numeric columns')
-        plt.xlabel('Columns')
-        plt.ylabel('Values')
-        plt.savefig('evaluation/boxplots_{}.png'.format(df_name))
-        # Correlation matrix
-        corr_matrix = df.corr(numeric_only=[False/True])
-        # Heatmap of correlation matrix
-        plt.matshow(corr_matrix)
-        plt.xticks(range(len(corr_matrix.columns)), corr_matrix.columns, rotation=90)
-        plt.yticks(range(len(corr_matrix.columns)), corr_matrix.columns)
-        plt.colorbar()
-        plt.savefig('evaluation/heatmap_{}.png'.format(df_name))
+        ##pre analysis
+def vis_outl_bxplt(df, columns, df_name):
+    df_num = df.loc[:,columns]
+    _, ax = plt.subplots(figsize=(20,6))
+    df_num.plot(kind = 'box', ax=ax)
+    plt.savefig(f'analysis/boxplot_{df_name}.png')
 
 #-----------------------------------------------------------------------------
-## let's test it
-#load data
-# df1 = pd.read_csv('o2_download_nexus5x.csv'); df2 = pd.read_csv('telekom_download_nexus5x.csv'); df3 = pd.read_csv('vodafone_download_nexus5x.csv')
-# df4 = pd.read_csv('o2_upload_nexus5x.csv'); df5 = pd.read_csv('telekom_upload_nexus5x.csv'); df6 = pd.read_csv('vodafone_upload_nexus5x.csv')
-# df_downloads,df_uploads = load_df(df1,df2,df3,df4,df5,df6)
-# print(df_downloads.head(1)); print(df_uploads.head(1))
+        ##analyze data # create charts, planes...
 
-## Scale - *chose type of scaling
-# scaler_norm = MinMaxScaler() #scale between <0,1> (for e.g. algor: KNN or NN)
-# scaler_stand = StandardScaler() #scale differently ( for e.g. Logistic Regression, Linear Discriminant Analysis)
+def analyze(df, df_name):
+    
+    df = df.select_dtypes(include=['int64' , 'float64'])
 
-#new data frames -scaled- to analyze and put into ML model
-# df_scaled_downloads, df_scaled_uploads = clean_df(df_downloads, df_uploads, scaler_norm)
-# analyze(df_scaled_downloads,df_scaled_uploads)
-# print(df_downloads.head(1)); print(df_uploads.head(1))
+    #table - describe
+    stats = df.describe() #if specific attributes (columns) should be describe. Czy to powinno być tutaj czy przed scalowaniem
+    stats.to_csv('analysis/stats_{}.csv'.format(df_name))
+    
+    # Histograms of numeric columns
+    df.hist(figsize=(20,15))
+    plt.savefig('analysis/histogram_{}.png'.format(df_name))
+
+    # Boxplots of all numeric columns
+    # exclude_cols = ['chipsettime','qualitytimestamp','gpstime']
+    # new_cols = df.select_dtypes(include=['int64' , 'float64']).columns.difference(exclude_cols)
+    _, ax = plt.subplots(figsize=(20,6))
+    # df[new_cols].plot(kind='box', ax=ax)
+    df.plot(kind='box', ax=ax)
+    plt.title('Box plot of numeric columns')
+    plt.xlabel('Columns')
+    plt.ylabel('Values')
+    plt.savefig('analysis/boxplots_{}.png'.format(df_name))
+
+    # Correlation matrix
+    corr_matrix = df.corr(numeric_only=[False/True])
+    # Heatmap of correlation matrix
+    plt.matshow(corr_matrix)
+    plt.xticks(range(len(corr_matrix.columns)), corr_matrix.columns, rotation=90)
+    plt.yticks(range(len(corr_matrix.columns)), corr_matrix.columns)
+    plt.colorbar()
+    plt.savefig('analysis/heatmap_{}.png'.format(df_name))
+#-----------------------------------------------------------------------------
