@@ -37,7 +37,6 @@ def merge_df(dataFrame_downloads, dataFrame_uploads):
         proces_downloadOrUpload = ['download', 'upload']
         dataFrame_downloads["proces_DorU"] = proces_downloadOrUpload[0]
         dataFrame_uploads["proces_DorU"] = proces_downloadOrUpload[1]
-
         dataFrame_merged = pd.concat([dataFrame_downloads, dataFrame_uploads])
         dataFrame_merged.to_csv('analysis/df_merged.csv', index = False)
 

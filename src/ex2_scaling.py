@@ -1,8 +1,3 @@
-# import pandas as pd
-# import numpy as np
-# import matplotlib.pyplot as plt
-# from sklearn.preprocessing import MinMaxScaler, StandardScaler
-
 #------------------------------------------------------------------------------------
         ##Standardize data - Check for inconsistent data formats and standardize them to make analysis easier.
 ##https://www.analyticsvidhya.com/blog/2020/04/feature-scaling-machine-learning-normalization-standardization/#Why_Should_We_Use_Feature_Scaling?
