@@ -1,4 +1,5 @@
 import pandas as pd
+import os
 
 ##load data for two groups: download and upload
 def load_df(df1,df2,df3,df4,df5,df6):
@@ -16,6 +17,11 @@ def load_df(df1,df2,df3,df4,df5,df6):
 
 #Merging two dataframes into one
 def merge_df(dataFrame_downloads, dataFrame_uploads):
+        directory = 'analysis'
+        if not os.path.exists(directory):
+                os.makedirs(directory)
+        file_path = os.path.join(directory, 'df_merged.csv')
+
         dataFrame_downloads['tbs'] = dataFrame_downloads['tbs0'] + dataFrame_downloads['tbs1']
         dataFrame_downloads.rename(columns = {'rb0':'rbs', 'mcs0':'mcs'}, inplace = True)
         dataFrame_downloads.drop(['tbs0', 'tbs1', 'mimo','rnti','rb1','scc','caindex','mcs1'], axis=1, inplace = True)
@@ -38,6 +44,6 @@ def merge_df(dataFrame_downloads, dataFrame_uploads):
         dataFrame_downloads["proces_DorU"] = proces_downloadOrUpload[0]
         dataFrame_uploads["proces_DorU"] = proces_downloadOrUpload[1]
         dataFrame_merged = pd.concat([dataFrame_downloads, dataFrame_uploads])
-        dataFrame_merged.to_csv('analysis/df_merged.csv', index = False)
+        dataFrame_merged.to_csv(file_path, index = False)
 
         return dataFrame_merged

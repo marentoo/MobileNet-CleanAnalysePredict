@@ -1,10 +1,12 @@
 import numpy as np
+import os
 
 ##Cleaning data
 #------------------------------------------------------------------------------------
         ##check duplicates and ##Checking percentage of duplicates and ##Removing all duplicates
 
 def clean_dupl(df, df_name):
+
     duplicateRows = df[df.duplicated()]
     print(f'No. duplicated rows - {df_name}: {len(duplicateRows.index)}')
     percentage = int(len(duplicateRows.index) * 100) / len(df.index)
@@ -46,6 +48,7 @@ def detect_outliers(df, df_name):
 #------------------------------------------------------------------------------------
         ##final function
 def clean_df(df, df_name):
+
     print(f'{df_name}')
     df = clean_dupl(df, f'{df_name}')
     df = clean_miss(df,f'{df_name}')
