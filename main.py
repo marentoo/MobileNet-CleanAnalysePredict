@@ -36,7 +36,7 @@ def main():
     df_scaled_merged = scaling_data(df_cleaned_merged, 'merged', scaler_norm)
     
     #Prediction - building model and predicting
-    predict(df_scaled_download,df_scaled_upload, df_scaled_merged)
+    predict(df_scaled_download, df_scaled_upload, df_scaled_merged)
 
     # return df_scaled_downloads, df_scaled_uploads, df_scaled_merged
 
