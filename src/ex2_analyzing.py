@@ -12,12 +12,18 @@ def vis_bxplt(df, columns, df_name):
         ##analyze data # create charts, planes...
 
 def analyze(df, df_name, col1 = None, col2=None):
-    
-    df = df.select_dtypes(include=['int64' , 'float64'])
-
-    #table - describe
-    stats = df.describe() #if specific attributes (columns) should be describe. Czy to powinno być tutaj czy przed scalowaniem
+        #table - describe numeric columns
+    stats = df.describe() #if specific attributes (columns) should be describe.
     stats.to_csv('analysis/stats_{}.csv'.format(df_name))
+
+    #     #analyzing by network providers - uncomment to analyze stats for each provider
+    # grouped_df = df.groupby('mobiProv_name')
+    # for name, group in grouped_df:
+    #     stats = group.describe()
+    #     stats.to_csv(f'analysis/stats_{name}_{df_name}.csv')
+
+    df = df.select_dtypes(include=['int64' , 'float64']).join(df['mobiProv_name'])
+    
     
     # Histograms of numeric columns
     df.hist(figsize=(20,15))
@@ -39,4 +45,7 @@ def analyze(df, df_name, col1 = None, col2=None):
     plt.yticks(range(len(corr_matrix.columns)), corr_matrix.columns)
     plt.colorbar()
     plt.savefig('analysis/heatmap_{}.png'.format(df_name))
-#-----------------------------------------------------------------------------
+
+
+
+#-----------------------------------------------------------------------------   

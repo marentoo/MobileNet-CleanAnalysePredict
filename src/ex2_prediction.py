@@ -20,27 +20,51 @@ import os
 
 #------------------------------------------------------------------------------------
 models_reg= (
-    DecisionTreeRegressor(random_state = 42),
+    DecisionTreeRegressor(random_state = 42, max_depth=10),
     #SVR(kernel="linear"), #kernel{‘linear’, ‘poly’, ‘rbf’, ‘sigmoid’, ‘precomputed’} or callable, default=’rbf’) Dlugo?!
-    GradientBoostingRegressor(),
-    RandomForestRegressor(n_estimators=60, random_state=42),
+    GradientBoostingRegressor(random_state=42, n_estimators=60, max_depth=3, learning_rate=0.1),
+    RandomForestRegressor(n_estimators=60, random_state=42, max_depth=10, max_features=0.5),
     LinearRegression()
+    #Ridge(alpha=0.5),
+    #Lasso(alpha=0.5)
     )
 
-def prediction_regression(model, data, columns_feature, target, dataset_name):
+def prediction_regression(model, data, columns_feature, target, dataset_name,predictors = None):
         directory = 'evaluation'
         if not os.path.exists(directory):
                 os.makedirs(directory)
-        file_path_ev = os.path.join(directory, f'{type(model).__name__}_plots_{dataset_name}.png')   
+        file_path_ev = os.path.join(directory, f'{type(model).__name__}_plots_{dataset_name}_{target}.png')   
                 
                 #load data
+        #select attributes to use as predictors if none then all that are fed into
+        if predictors is not None:
+                data = data[predictors + [target]]
+
         data = pd.get_dummies(data, columns = columns_feature)
+        print(data.columns)
         X = data.drop([target], axis=1)
+        print(X.columns)
         y = data[target]
-        X_train, X_test, y_train, y_test = train_test_split(X,y, test_size=0.2, random_state=42)
+        X_train, X_test, y_train, y_test = train_test_split(X,y, test_size=0.2, random_state=42, shuffle=True)
 
                 #build model
         model = model
+
+                #cross validation
+        ## Apply cross-validation
+        # scores = cross_val_score(model, X, y, cv=5, scoring='neg_mean_squared_error')
+        # rmse_scores = np.sqrt(-scores)
+        # r2_scores = cross_val_score(model, X, y, cv=cv, scoring='r2')
+
+        # # Print cross-validation results
+        # print('---------------', type(model).__name__, '------------------')
+        # print(f'Cross-validation RMSE scores: {rmse_scores}')
+        # print(f'Mean RMSE: {rmse_scores.mean()}')
+        # print(f'Standard deviation of RMSE: {rmse_scores.std()}')
+        # print(f'Cross-validation R-squared scores: {r2_scores}')
+        # print(f'Mean R-squared: {r2_scores.mean()}')
+        # print(f'Standard deviation of R-squared: {r2_scores.std()}')
+
         # fit the model on the training data
         model.fit(X_train, y_train)
         # Make predictions on the testing set
@@ -55,6 +79,7 @@ def prediction_regression(model, data, columns_feature, target, dataset_name):
         r2 = r2_score(y_test, y_pred)
 
         print('---------------',type(model).__name__,'------------------')
+        print(X.shape[1])
         print("MSE:", mse)
         print("RMSE:", rmse)
         print("R-squared:", r2)
@@ -65,29 +90,42 @@ def prediction_regression(model, data, columns_feature, target, dataset_name):
         ax.set_xlabel('True Values')
         ax.set_ylabel('Predictions')
         fig.savefig(file_path_ev)
+        plt.close(fig)
 
 
 #-------------------------------------------------------------------------------------------------
-models_clas = (DecisionTreeClassifier(random_state=42),
-               GradientBoostingClassifier(),
-               RandomForestClassifier(),
-               SVC(kernel="linear") #kernel{‘linear’, ‘poly’, ‘rbf’, ‘sigmoid’, ‘precomputed’} or callable, default=’rbf’
+models_clas = (DecisionTreeClassifier(random_state = 42, max_depth=10),
+               GradientBoostingClassifier(learning_rate=0.1, n_estimators=60, max_depth=10, random_state=42),
+               RandomForestClassifier(n_estimators=60, max_depth=10, random_state=42),
+               SVC(kernel="linear", C=0.1) #kernel{‘linear’, ‘poly’, ‘rbf’, ‘sigmoid’, ‘precomputed’} or callable, default=’rbf’
 
 )
 
-def prediction_classification(model, data, columns_feature, target, dataset_name):
+def prediction_classification(model, data, columns_feature, target, dataset_name, predictors):
         directory = 'evaluation'
         if not os.path.exists(directory):
                 os.makedirs(directory)
-        file_path_ev2 = os.path.join(directory, f'{type(model).__name__}_ConfusionMatrix_{dataset_name}.png')
+        file_path_ev2 = os.path.join(directory, f'{type(model).__name__}_ConfusionMatrix_{dataset_name}_{target}_.png')
                 # Load data
+        #select attributes to use as predictors if none then all that are fed into
+        if predictors is not None:
+              data = data[predictors + [target]]
+              
         data = pd.get_dummies(data, columns=columns_feature)
         X = data.drop([target], axis=1)
         y = data[target]
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-                # Create a decision tree model
+                # Build model
         model = model
+        # # Fit the model on the training data using cross-validation
+        # cv_scores = cross_val_score(model, X_train, y_train, cv=5)
+        # #Print cross-validation results
+        # print('---------------', type(model).__name__, '------------------')
+        # print(f'Cross-validation scores: {cv_scores}')
+        # print(f'Mean cross-validation score: {cv_scores.mean()}')
+        # print(f'Standard deviation of cross-validation score: {cv_scores.std()}')
+
         # Fit the model on the training data
         model.fit(X_train, y_train)
         # Make predictions on the testing set
@@ -108,6 +146,7 @@ def prediction_classification(model, data, columns_feature, target, dataset_name
         cm = confusion_matrix(y_test, y_pred)
 
         print('---------------',type(model).__name__,'------------------')
+        print(X.shape[1])
         print("Accuracy:", accuracy)
         print("Precision:", precision)
         print("Recall:", recall)
@@ -126,7 +165,7 @@ def prediction_classification(model, data, columns_feature, target, dataset_name
         plt.yticks(ticks=[0,1,2], labels=['o2', 'telekom', 'vodafone'])
         plt.savefig(file_path_ev2)
 
-        #plol ROC curve
+        #plot ROC curve
 #...
         n_classes = len(np.unique(y_test))
         fpr = dict()
@@ -149,17 +188,20 @@ def prediction_classification(model, data, columns_feature, target, dataset_name
         plt.ylabel('True Positive Rate')
         plt.title('Receiver operating characteristic (ROC) curves')
         plt.legend(loc="lower right")
-        plt.savefig(f'evaluation/{type(model).__name__}_ROC_curve_{dataset_name}.png')
+        plt.savefig(f'evaluation/{type(model).__name__}_ROC_curve_{dataset_name}_{target}.png')
 
         # precision recall curve ...
 
 
 #-------------------------------------------------------------------------------------------------
 def predict(downloads, uploads, merged):
+        # _predictors = ['speed','rsrq','rsrp','rssi','earfcn']#,'proces_DorU']
+
 
         prediction_regression(models_reg[0], downloads, ['mobiProv_name', 'mcs0', 'mcs1'],'throughput','downloads')
         prediction_regression(models_reg[0], uploads, ['mobiProv_name'],'tp_cleaned' ,'uploads')
         prediction_regression(models_reg[0], merged,['mcs', 'mobiProv_name' , 'proces_DorU'],'throughput','merged')
+
 
         # prediction_classification(models_clas[0], downloads, ['mcs0', 'mcs1'],'mobiProv_name','downloads')
         # prediction_classification(models_clas[0], uploads, [],'mobiProv_name' ,'uploads')
